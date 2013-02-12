@@ -82,9 +82,11 @@ rb_create_context
   ctxt->allocator = allocator;
   ref_init(&ctxt->ref);
 
-  #define GL_FUNC(type, func, ...) \
-    rbgl##func = (type (*)(__VA_ARGS__)) \
-      RB_OGL3_GET_PROC_ADDRESS(STR(gl##func));
+  #define GL_FUNC(type, func, ...)                                             \
+    rbgl##func = (type (*)(__VA_ARGS__))                                       \
+      RB_OGL3_GET_PROC_ADDRESS(STR(gl##func));                                 \
+    if(!rbgl##func)                                                            \
+      goto error;
   #include "ogl3/rb_ogl3_gl_func.h"
   #undef GL_FUNC
 

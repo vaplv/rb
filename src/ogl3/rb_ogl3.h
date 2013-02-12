@@ -36,7 +36,7 @@
   #include <GL/glu.h>
   #include <stdio.h>
   #define OGL(func)\
-    rb_ogl3_##func;                                                            \
+    rbgl##func;                                                                \
     {                                                                          \
       GLenum gl_error = rbglGetError();                                        \
       if(gl_error != GL_NO_ERROR) {                                            \

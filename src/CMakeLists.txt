@@ -23,39 +23,45 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 cmake_minimum_required(VERSION 2.6)
-project(rb-ogl3)
+project(rb C)
+
+################################################################################
+# Setup compiler
+################################################################################
+if(NOT CMAKE_COMPILER_IS_GNUCC)
+  message(FATAL_ERROR "Unsupported compiler")
+endif(NOT CMAKE_COMPILER_IS_GNUCC)
+
+set(CMAKE_C_FLAGS "-pedantic -std=c99 -Wall -Wextra -Wcast-align -Wmissing-declarations -Wmissing-prototypes -fvisibility=hidden -fstrict-aliasing -Wl,-z,defs")
+set(CMAKE_C_FLAGS_DEBUG "-g")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 ################################################################################
 # Check dependencies
 ################################################################################
-find_path(GL_INCLUDE_DIR  NAMES GL/gl.h GL/glext.h)
-find_path(GLU_INCLUDE_DIR  NAMES GL/glu.h)
-find_library(GL_LIBRARY NAMES GL)
-find_library(GLU_LIBRARY NAMES GLU)
+find_path(SYS_INCLUDE_DIR "sys/sys.h")
+find_library(SYS_LIBRARY NAMES sys)
 
-if(NOT GL_INCLUDE_DIR OR NOT GL_LIBRARY)
-  message(FATAL_ERROR "Can't find GL headers/library")
-elseif(NOT GLU_INCLUDE_DIR OR NOT GLU_LIBRARY)
-  message(FATAL_ERROR "Can't find GLU header/library")
+if(NOT SYS_INCLUDE_DIR)
+  message(FATAL_ERROR "Can't find sys headers/library")
 else()
-  message(STATUS "GL found: ${GL_LIBRARY}")
-  message(STATUS "GLU found: ${GLU_LIBRARY}")
+  message(STATUS "sys found: ${SYS_LIBRARY}")
 endif()
 
-include_directories(${GL_INCLUDE_DIR})
-include_directories(${GLU_INCLUDE_DIR})
+include_directories(${SYS_INCLUDE_DIR})
 
 ################################################################################
-# Define target
+# Output files
 ################################################################################
-file(GLOB RBOGL3_FILES *.c)
-add_library(rb-ogl3 SHARED ${RBOGL3_FILES})
-
-target_link_libraries(rb-ogl3 ${GL_LIBRARY} ${GLU_LIBRARY} ${SYS_LIBRARY})
-set_target_properties(rb-ogl3 PROPERTIES DEFINE_SYMBOL RB_SHARED_BUILD)
+include_directories(./)
+file(GLOB RB_FILES_INC src/*.h)
+install(FILES ${RB_FILES_INC} DESTINATION include/rb)
 
 ################################################################################
-# Define outputs
+# Sub projects
 ################################################################################
-install(TARGETS rb-ogl3 LIBRARY DESTINATION lib)
+add_subdirectory(example)
+add_subdirectory(null)
+add_subdirectory(ogl3)
+add_subdirectory(rbi)
 

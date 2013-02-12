@@ -23,12 +23,25 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 cmake_minimum_required(VERSION 2.6)
-project(rb C)
+project(eg-rb C)
 
-include_directories(src/)
-file(GLOB RB_FILES_INC src/*.h)
-install( FILES ${RB_FILES_INC} DESTINATION include/rb)
+################################################################################
+# Check dependencies
+################################################################################
+find_path(WM_INCLUDE_DIR "wm/wm.h")
+find_library(WM_LIBRARY NAMES wm-glfw)
 
-add_subdirectory(src/null)
-add_subdirectory(src/ogl3)
-add_subdirectory(src/rbi)
+if(NOT WM_INCLUDE_DIR OR NOT WM_LIBRARY)
+  message(FATAL_ERROR "Can't find window manager header/library")
+else()
+  message(STATUS "wm found: ${WM_LIBRARY}")
+endif()
+
+include_directories(${WM_INCLUDE_DIR})
+
+################################################################################
+# Define target
+################################################################################
+add_executable(eg_rb eg_rb.c)
+target_link_libraries(eg_rb rbi m ${WM_LIBRARY})
+

@@ -25,25 +25,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(rb-null C)
 
-if(NOT CMAKE_COMPILER_IS_GNUCC)
-  message(FATAL_ERROR "Unsupported compiler")
-endif(NOT CMAKE_COMPILER_IS_GNUCC)
-
-set(CMAKE_C_FLAGS "-pedantic -std=c99 -Wall -Wextra -Wcast-align -Wmissing-declarations -Wmissing-prototypes -fvisibility=hidden -fstrict-aliasing -Wl,-z,defs")
-set(CMAKE_C_FLAGS_DEBUG "-g -DDEBUG")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
-
-################################################################################
-# Check dependencies
-################################################################################
-find_path(SYS_INCLUDE_DIR "sys/sys.h")
-
-if(NOT SYS_INCLUDE_DIR)
-  message(FATAL_ERROR "Can't find sys headers")
-endif()
-
-include_directories(${SYS_INCLUDE_DIR})
-
 ################################################################################
 # Define target
 ################################################################################
