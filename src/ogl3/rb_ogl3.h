@@ -31,26 +31,35 @@
 #include <sys/sys.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
-#include <assert.h>
 
 #ifndef NDEBUG
   #include <GL/glu.h>
-  #include <assert.h>
   #include <stdio.h>
   #define OGL(func)\
-    gl##func;\
-    do {\
-      GLenum gl_error = glGetError();\
-      if(gl_error != GL_NO_ERROR) {\
-        fprintf(stderr, "error:opengl: %s\n", gluErrorString(gl_error));\
-        assert(gl_error == GL_NO_ERROR);\
-      }\
-    } while(0)
+    rb_ogl3_##func;                                                            \
+    {                                                                          \
+      GLenum gl_error = rbglGetError();                                        \
+      if(gl_error != GL_NO_ERROR) {                                            \
+        fprintf(stderr, "error:opengl: %s\n", gluErrorString(gl_error));       \
+        ASSERT(gl_error == GL_NO_ERROR);                                       \
+      }                                                                        \
+    } (void) 0
 #else
-  #define OGL(func) gl##func
+  #define OGL(func) rbgl##func
 #endif
 
-/* OpenGL 3.3 spec. */
+#ifdef PLATFORM_UNIX
+  #include <GL/glx.h>
+  #define RB_OGL3_GET_PROC_ADDRESS(name) \
+    glXGetProcAddress((const GLubyte*)(name))
+#endif
+
+/* Define rb_ogl3 function pointers */
+#define GL_FUNC(type, func, ...) type (*rbgl##func)(__VA_ARGS__);
+#include "ogl3/rb_ogl3_gl_func.h"
+#undef GL_FUNC
+
+/* OpenGL 3.3 spec */
 #define RB_OGL3_MAX_TEXTURE_UNITS 16 
 #define RB_OGL3_MAX_COLOR_ATTACHMENTS 8
 

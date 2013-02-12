@@ -47,7 +47,7 @@ release_program(struct ref* ref)
   struct list_node* tmp = NULL;
   struct rb_context* ctxt = NULL;
   struct rb_program* prog = NULL;
-  assert(ref);
+  ASSERT(ref);
 
   prog = CONTAINER_OF(ref, struct rb_program, ref);
   ctxt = prog->ctxt;

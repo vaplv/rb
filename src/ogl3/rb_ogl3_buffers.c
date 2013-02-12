@@ -30,7 +30,6 @@
 #include "rb.h"
 #include <sys/mem_allocator.h>
 #include <sys/sys.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -51,7 +50,7 @@ public_to_private_rb_target(enum rb_buffer_target public_target)
       private_target = RB_OGL3_BIND_INDEX_BUFFER;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return private_target;
@@ -75,7 +74,7 @@ rb_to_ogl3_buffer_target(enum rb_ogl3_buffer_target target)
       ogl3_target = GL_PIXEL_UNPACK_BUFFER;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return ogl3_target;
@@ -97,7 +96,7 @@ rb_to_ogl3_usage(enum rb_usage usage)
       ogl3_usage = GL_STREAM_DRAW;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return ogl3_usage;
@@ -108,7 +107,7 @@ release_buffer(struct ref* ref)
 {
   struct rb_buffer* buffer = NULL;
   struct rb_context* ctxt = NULL;
-  assert(ref);
+  ASSERT(ref);
 
   buffer = CONTAINER_OF(ref, struct rb_buffer, ref);
   ctxt = buffer->ctxt;
@@ -196,7 +195,7 @@ rb_buffer_data
     const GLbitfield access = GL_MAP_WRITE_BIT;
     mapped_mem = OGL(MapBufferRange(buffer->target, offset, size, access));
   }
-  assert(mapped_mem != NULL);
+  ASSERT(mapped_mem != NULL);
   memcpy(mapped_mem, data, size);
   unmap = OGL(UnmapBuffer(buffer->target));
   OGL(BindBuffer

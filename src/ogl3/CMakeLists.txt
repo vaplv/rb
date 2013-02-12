@@ -67,10 +67,11 @@ add_library(rb-ogl3 SHARED ${RBOGL3_FILES})
 target_link_libraries(rb-ogl3 ${GL_LIBRARY} ${GLU_LIBRARY} ${SYS_LIBRARY})
 set_target_properties(rb-ogl3 PROPERTIES DEFINE_SYMBOL RB_SHARED_BUILD)
 # FIXME remove this flag
-set_target_properties(rb-ogl3 PROPERTIES COMPILE_DEFINITIONS
-  GL_GLEXT_PROTOTYPES)
+#set_target_properties(rb-ogl3 PROPERTIES COMPILE_DEFINITIONS
+#  GL_GLEXT_PROTOTYPES)
 
 ################################################################################
 # Define outputs
 ################################################################################
 install(TARGETS rb-ogl3 LIBRARY DESTINATION lib)
+

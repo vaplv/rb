@@ -31,7 +31,6 @@
 #include <sys/ref_count.h>
 #include <sys/mem_allocator.h>
 #include <sys/sys.h>
-#include <assert.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <string.h>
@@ -60,14 +59,14 @@ struct rb_framebuffer {
 static void
 release_render_target_resource(struct rb_render_target* rt)
 {
-  assert(rt);
+  ASSERT(rt);
   if(rt->resource == NULL)
     return;
   switch(rt->type) {
     case RB_RENDER_TARGET_TEXTURE2D:
       RB(tex2d_ref_put((struct rb_tex2d*)rt->resource));
       break;
-    default: assert(0); break;
+    default: ASSERT(0); break;
   }
   memset(rt, 0, sizeof(struct rb_render_target));
 }
@@ -84,7 +83,7 @@ attach_tex2d
   unsigned int mip = 0;
   int err = 0;
 
-  assert
+  ASSERT
     (  buffer
     && (attachment < 0 || (unsigned int)attachment < buffer->desc.buffer_count)
     && render_target);
@@ -92,7 +91,7 @@ attach_tex2d
   tex2d = (struct rb_tex2d*)render_target->resource;
   mip = render_target->desc.tex2d.mip_level;
   if(attachment >= 0) {
-    assert((unsigned int)attachment < buffer->desc.buffer_count);
+    ASSERT((unsigned int)attachment < buffer->desc.buffer_count);
     ogl3_attachment = GL_COLOR_ATTACHMENT0 + attachment;
     rt = buffer->render_target_list + attachment;
   } else {
@@ -104,7 +103,7 @@ attach_tex2d
         ogl3_attachment = GL_DEPTH_ATTACHMENT;
         break;
       default:
-        assert(0);
+        ASSERT(0);
         break;
     }
     rt = &buffer->depth_stencil;
@@ -140,7 +139,7 @@ attach_render_target
    const struct rb_render_target* render_target)
 {
   int err = 0;
-  assert
+  ASSERT
     (  buffer
     && (attachment < 0 || (unsigned int)attachment < buffer->desc.buffer_count)
     && render_target);
@@ -149,7 +148,7 @@ attach_render_target
     case RB_RENDER_TARGET_TEXTURE2D:
       err = attach_tex2d(buffer,attachment, render_target);
       break;
-    default: assert(0); break;
+    default: ASSERT(0); break;
   }
 
   if(err != 0)
@@ -168,7 +167,7 @@ get_ogl3_render_target_desc
 {
   struct rb_tex2d* tex2d = NULL;
 
-  assert(target);
+  ASSERT(target);
   switch(target->type) {
     case RB_RENDER_TARGET_TEXTURE2D:
       tex2d = (struct rb_tex2d*)target->resource;
@@ -178,7 +177,7 @@ get_ogl3_render_target_desc
         tex2d->mip_list[target->desc.tex2d.mip_level].width
       * tex2d->mip_list[target->desc.tex2d.mip_level].height;
       break;
-    default: assert(0); break;
+    default: ASSERT(0); break;
   }
   ogl3_desc->size *= rb_ogl3_sizeof_pixel(ogl3_desc->format, ogl3_desc->type);
 }
@@ -189,7 +188,7 @@ release_framebuffer(struct ref* ref)
   struct rb_context* ctxt  = NULL;
   struct rb_framebuffer* buffer = NULL;
   unsigned int i = 0;
-  assert(ref);
+  ASSERT(ref);
 
   buffer = CONTAINER_OF(ref, struct rb_framebuffer, ref);
   OGL(DeleteFramebuffers(1, &buffer->name));
@@ -305,7 +304,7 @@ rb_framebuffer_render_targets
   if(depth_stencil)
     attach_render_target(buffer, -1, depth_stencil);
   for(i = 0; i < count; ++i) {
-    assert(i <= INT_MAX);
+    ASSERT(i <= INT_MAX);
     attach_render_target(buffer, (int)i, render_target_list+i);
   }
 

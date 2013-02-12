@@ -30,7 +30,6 @@
 #include <sys/mem_allocator.h>
 #include <sys/ref_count.h>
 #include <sys/sys.h>
-#include <assert.h>
 
 struct rb_sampler {
   struct ref ref;
@@ -89,7 +88,7 @@ rb_to_ogl3_tex_filter(enum rb_tex_filter filter)
       ogl3_filter.mag = GL_LINEAR;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return ogl3_filter;
@@ -107,7 +106,7 @@ rb_to_ogl3_address(enum rb_tex_address address)
       ogl3_address = GL_CLAMP_TO_EDGE;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return ogl3_address;
@@ -119,7 +118,7 @@ release_sampler(struct ref* ref)
   struct rb_context* ctxt = NULL;
   struct rb_sampler* sampler = NULL;
   size_t i = 0;
-  assert(ref);
+  ASSERT(ref);
 
   sampler = CONTAINER_OF(ref, struct rb_sampler, ref);
   ctxt = sampler->ctxt;
@@ -210,7 +209,7 @@ rb_sampler_parameters
     goto error;
 
   OGL(GetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max_tex_max_aniso));
-  assert(max_tex_max_aniso >= 0);
+  ASSERT(max_tex_max_aniso >= 0);
   if(desc->max_anisotropy > (size_t)max_tex_max_aniso)
     goto error;
 

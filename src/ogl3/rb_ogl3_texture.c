@@ -31,7 +31,6 @@
 #include <sys/math.h>
 #include <sys/mem_allocator.h>
 #include <sys/sys.h>
-#include <assert.h>
 #include <stdlib.h>
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
@@ -63,7 +62,7 @@ ogl3_compressed_internal_format(enum rb_tex_format fmt)
     case RB_SRGB: ogl3_ifmt = GL_COMPRESSED_SRGB; break;
     case RB_SRGBA: ogl3_ifmt = GL_COMPRESSED_SRGB_ALPHA; break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return ogl3_ifmt;
@@ -90,7 +89,7 @@ ogl3_internal_format(enum rb_tex_format fmt)
     case RB_DEPTH_COMPONENT: ogl3_ifmt = GL_DEPTH_COMPONENT24; break;
     case RB_DEPTH_STENCIL: ogl3_ifmt = GL_DEPTH24_STENCIL8; break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return ogl3_ifmt;
@@ -124,7 +123,7 @@ ogl3_format(enum rb_tex_format fmt)
       break;
     case RB_DEPTH_COMPONENT: ogl3_fmt = GL_DEPTH_COMPONENT; break;
     case RB_DEPTH_STENCIL: ogl3_fmt = GL_DEPTH_STENCIL; break;
-    default: assert(0); break;
+    default: ASSERT(0); break;
   }
   return ogl3_fmt;
 }
@@ -158,7 +157,7 @@ ogl3_type(enum rb_tex_format fmt)
       type = GL_UNSIGNED_INT_24_8;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return type;
@@ -170,7 +169,7 @@ release_tex2d(struct ref* ref)
   struct rb_context* ctxt = NULL;
   struct rb_tex2d* tex = NULL;
   size_t i = 0;
-  assert(ref);
+  ASSERT(ref);
 
   tex = CONTAINER_OF(ref, struct rb_tex2d, ref);
   ctxt = tex->ctxt;
@@ -412,7 +411,7 @@ rb_ogl3_sizeof_pixel(GLenum fmt, GLenum type)
     case GL_DEPTH_STENCIL:
       ncomponents = 1;
       break;
-    default: assert(0); break;
+    default: ASSERT(0); break;
   }
   switch(type) {
     case GL_UNSIGNED_BYTE:
@@ -427,7 +426,7 @@ rb_ogl3_sizeof_pixel(GLenum fmt, GLenum type)
     case GL_UNSIGNED_INT_24_8:
       sizeof_component = 4;
       break;
-    default: assert(0); break;
+    default: ASSERT(0); break;
   }
   return ncomponents * sizeof_component;
 }

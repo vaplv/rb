@@ -31,7 +31,6 @@
 #include <sys/mem_allocator.h>
 #include <sys/ref_count.h>
 #include <sys/sys.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -94,7 +93,7 @@ static void
       return &uniform_1iv;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       return NULL;
       break;
   }
@@ -174,7 +173,7 @@ release_uniform(struct ref* ref)
 {
   struct rb_context* ctxt = NULL;
   struct rb_uniform* uniform = NULL;
-  assert(ref);
+  ASSERT(ref);
 
   uniform = CONTAINER_OF(ref, struct rb_uniform, ref);
   ctxt = uniform->ctxt;
@@ -259,7 +258,7 @@ rb_get_uniforms
     goto error;
 
   OGL(GetProgramiv(prog->name, GL_ACTIVE_UNIFORMS, &nb_uniforms));
-  assert(nb_uniforms >= 0);
+  ASSERT(nb_uniforms >= 0);
 
   if(dst_uniform_list) {
       OGL(GetProgramiv
@@ -328,7 +327,7 @@ rb_uniform_data(struct rb_uniform* uniform, int nb, const void* data)
   if(nb <= 0)
     return -1;
 
-  assert(uniform->set != NULL);
+  ASSERT(uniform->set != NULL);
   OGL(UseProgram(uniform->program->name));
   uniform->set(uniform->location, nb, data);
   OGL(UseProgram(uniform->ctxt->state_cache.current_program));

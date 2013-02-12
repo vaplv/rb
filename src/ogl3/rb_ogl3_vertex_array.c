@@ -31,7 +31,6 @@
 #include <sys/mem_allocator.h>
 #include <sys/ref_count.h>
 #include <sys/sys.h>
-#include <assert.h>
 #include <stdlib.h>
 
 struct rb_vertex_array {
@@ -56,7 +55,7 @@ ogl3_attrib_nb_components(enum rb_type type)
     case RB_FLOAT3: nb = 3; break;
     case RB_FLOAT4: nb = 4; break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return nb;
@@ -67,7 +66,7 @@ release_vertex_array(struct ref* ref)
 {
   struct rb_context* ctxt = NULL;
   struct rb_vertex_array* varray = NULL;
-  assert(ref);
+  ASSERT(ref);
 
   varray = CONTAINER_OF(ref, struct rb_vertex_array, ref);
   ctxt = varray->ctxt;

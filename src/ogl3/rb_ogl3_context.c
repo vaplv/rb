@@ -28,7 +28,6 @@
 #include "rb.h"
 #include <sys/mem_allocator.h>
 #include <sys/sys.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -42,10 +41,10 @@ setup_config(struct rb_config* cfg)
 {
   int i = 0;
   OGL(GetIntegerv(GL_MAX_TEXTURE_SIZE, &i));
-  assert(i > 0);
+  ASSERT(i > 0);
   cfg->max_tex_size = (size_t)i;
   OGL(GetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &i));
-  assert(i > 0);
+  ASSERT(i > 0);
   cfg->max_tex_max_anisotropy = (size_t)i;
 }
 
@@ -53,7 +52,7 @@ static void
 release_context(struct ref* ref)
 {
   struct rb_context* ctxt = NULL;
-  assert(ref);
+  ASSERT(ref);
 
   ctxt = CONTAINER_OF(ref, struct rb_context, ref);
   MEM_FREE(ctxt->allocator, ctxt);
@@ -82,6 +81,12 @@ rb_create_context
     goto error;
   ctxt->allocator = allocator;
   ref_init(&ctxt->ref);
+
+  #define GL_FUNC(type, func, ...) \
+    rbgl##func = (type (*)(__VA_ARGS__)) \
+      RB_OGL3_GET_PROC_ADDRESS(STR(gl##func));
+  #include "ogl3/rb_ogl3_gl_func.h"
+  #undef GL_FUNC
 
   setup_config(&ctxt->config);
 

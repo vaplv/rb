@@ -145,7 +145,7 @@ release_attrib(struct ref* ref)
 {
   struct rb_attrib* attr = NULL;
   struct rb_context* ctxt = NULL;
-  assert(ref);
+  ASSERT(ref);
 
   attr = CONTAINER_OF(ref, struct rb_attrib, ref);
   ctxt = attr->ctxt;
@@ -183,7 +183,7 @@ rb_get_attribs
     goto error;
 
   OGL(GetProgramiv(prog->name, GL_ACTIVE_ATTRIBUTES, &nb_attribs));
-  assert(nb_attribs >= 0);
+  ASSERT(nb_attribs >= 0);
 
   if(dst_attrib_list) {
     OGL(GetProgramiv(prog->name, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attr_buflen));
@@ -296,7 +296,7 @@ rb_attrib_data(struct rb_attrib* attr, const void* data)
   if(!attr || !data)
     return -1;
 
-  assert(attr->set != NULL);
+  ASSERT(attr->set != NULL);
   OGL(UseProgram(attr->program->name));
   attr->set(attr->index, data);
   OGL(UseProgram(attr->ctxt->state_cache.current_program));

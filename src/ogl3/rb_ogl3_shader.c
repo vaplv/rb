@@ -52,7 +52,7 @@ rb_to_ogl3_shader_type(enum rb_shader_type type)
       ogl3_type = GL_FRAGMENT_SHADER;
       break;
     default:
-      assert(0);
+      ASSERT(0);
       break;
   }
   return ogl3_type;
@@ -63,7 +63,7 @@ release_shader(struct ref* ref)
 {
   struct rb_context* ctxt = NULL;
   struct rb_shader* shader = NULL;
-  assert(ref);
+  ASSERT(ref);
 
   shader = CONTAINER_OF(ref, struct rb_shader, ref);
   ctxt = shader->ctxt;
