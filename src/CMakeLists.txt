@@ -54,7 +54,7 @@ include_directories(${SYS_INCLUDE_DIR})
 # Output files
 ################################################################################
 include_directories(./)
-file(GLOB RB_FILES_INC src/*.h)
+file(GLOB RB_FILES_INC *.h)
 install(FILES ${RB_FILES_INC} DESTINATION include/rb)
 
 ################################################################################
