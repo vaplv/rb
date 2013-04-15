@@ -159,7 +159,7 @@ rb_link_program(struct rb_program* program)
     OGL(GetProgramiv(program->name, GL_INFO_LOG_LENGTH, &log_length));
 
     program->log = MEM_REALLOC
-      (program->ctxt->allocator, program->log, log_length*sizeof(char));
+      (program->ctxt->allocator, program->log, (size_t)log_length*sizeof(char));
     if(!program->log)
       goto error;
 

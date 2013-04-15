@@ -161,7 +161,7 @@ RB_FUNC( create_shader,
   struct rb_context* ctxt,
   enum rb_shader_type type,
   const char* source,
-  int length, /* Do not include the null character. */
+  size_t length, /* Do not include the null character. */
   struct rb_shader** out_shader
 )
 
@@ -186,7 +186,7 @@ RB_FUNC( is_shader_attached,
 RB_FUNC( shader_source,
   struct rb_shader* shader,
   const char* source,
-  int length /* Do not include the null character. */
+  size_t length /* Do not include the null character. */
 )
 
 /*******************************************************************************

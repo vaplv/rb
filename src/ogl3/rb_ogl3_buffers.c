@@ -170,7 +170,7 @@ rb_buffer_data
     mapped_mem = OGL(MapBufferRange(buffer->target, offset, size, access));
   }
   ASSERT(mapped_mem != NULL);
-  memcpy(mapped_mem, data, size);
+  memcpy(mapped_mem, data, (size_t)size);
   unmap = OGL(UnmapBuffer(buffer->target));
   OGL(BindBuffer
     (buffer->target, 

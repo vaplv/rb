@@ -11,7 +11,7 @@
 #include <string.h>
 #include <math.h>
 
-#define M_DEG_TO_RAD(x) ((x) * 3.14159 / 180.f)
+#define M_DEG_TO_RAD(x) ((x) * 3.14159f / 180.f)
 
 struct render_mesh {
   struct rb_buffer* vertex_buffer;

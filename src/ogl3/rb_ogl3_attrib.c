@@ -11,7 +11,7 @@
 struct rb_attrib {
   struct ref ref;
   struct rb_context* ctxt;
-  GLuint index;
+  GLint index;
   GLenum type;
   struct rb_program* program;
   char* name;
@@ -23,12 +23,12 @@ struct rb_attrib {
  * Helper functions.
  *
  ******************************************************************************/
-#define ATTRIB_VALUE(suffix)\
-  static void\
-  attrib_##suffix(GLuint index, const void* data)\
-  {\
-    OGL(VertexAttrib##suffix(index, data));\
-  }\
+#define ATTRIB_VALUE(suffix)                                                   \
+  static void                                                                  \
+  attrib_##suffix(GLuint index, const void* data)                              \
+  {                                                                            \
+    OGL(VertexAttrib##suffix(index, data));                                    \
+  }
 
 ATTRIB_VALUE(1fv)
 ATTRIB_VALUE(2fv)
@@ -93,10 +93,10 @@ get_active_attrib
     /* Add 1 to namelen <=> include the null character. */
     ++attr_namelen;
 
-    attr->name = MEM_ALLOC(ctxt->allocator, sizeof(char) * attr_namelen);
+    attr->name = MEM_ALLOC(ctxt->allocator, sizeof(char)*(size_t)attr_namelen);
     if(!attr->name)
       goto error;
-    attr->name = strncpy(attr->name, buffer, attr_namelen);
+    attr->name = strncpy(attr->name, buffer, (size_t)attr_namelen);
     attr->index = OGL(GetAttribLocation(program->name, attr->name));
   }
 
@@ -161,7 +161,7 @@ rb_get_attribs
 
   if(dst_attrib_list) {
     OGL(GetProgramiv(prog->name, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attr_buflen));
-    attr_buffer = MEM_ALLOC(ctxt->allocator, sizeof(GLchar) * attr_buflen);
+    attr_buffer = MEM_ALLOC(ctxt->allocator,sizeof(GLchar)*(size_t)attr_buflen);
     if(!attr_buffer)
       goto error;
 
@@ -169,7 +169,7 @@ rb_get_attribs
       struct rb_attrib* attr = NULL;
 
       err = get_active_attrib
-        (ctxt, prog, attr_id, attr_buflen, attr_buffer, &attr);
+        (ctxt, prog, (GLuint)attr_id, attr_buflen, attr_buffer, &attr);
       if(err != 0)
         goto error;
 
@@ -181,7 +181,7 @@ exit:
   if(attr_buffer)
     MEM_FREE(ctxt->allocator, attr_buffer);
   if(out_nb_attribs)
-    *out_nb_attribs = nb_attribs;
+    *out_nb_attribs = (size_t)nb_attribs;
   return err;
 
 error:
@@ -220,7 +220,7 @@ rb_get_named_attrib
   if(attr_id == -1)
     goto error;
 
-  err = get_active_attrib(ctxt, prog, attr_id, 0, NULL, &attr);
+  err = get_active_attrib(ctxt, prog, (GLuint)attr_id, 0, NULL, &attr);
   if(err != 0)
     goto error;
 
@@ -272,7 +272,7 @@ rb_attrib_data(struct rb_attrib* attr, const void* data)
 
   ASSERT(attr->set != NULL);
   OGL(UseProgram(attr->program->name));
-  attr->set(attr->index, data);
+  attr->set((GLuint)attr->index, data);
   OGL(UseProgram(attr->ctxt->state_cache.current_program));
   return 0;
 }

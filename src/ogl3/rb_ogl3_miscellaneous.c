@@ -82,7 +82,7 @@ rb_draw_indexed
   if(!ctxt)
     return -1;
   OGL(DrawElements
-    (rb_to_ogl3_primitive_type[prim_type], count, GL_UNSIGNED_INT, NULL));
+    (rb_to_ogl3_primitive_type[prim_type],(GLint)count, GL_UNSIGNED_INT, NULL));
   return 0;
 }
 
@@ -94,7 +94,7 @@ rb_draw
 {
   if(!ctxt)
     return -1;
-  OGL(DrawArrays(rb_to_ogl3_primitive_type[prim_type], 0, count));
+  OGL(DrawArrays(rb_to_ogl3_primitive_type[prim_type], 0, (GLint)count));
   return 0;
 }
 
@@ -208,12 +208,12 @@ rb_depth_stencil
         (GL_FRONT,
          rb_to_ogl3_comparison[desc->front_face_op.stencil_func],
          desc->stencil_ref,
-         ~0));
+         0xFFFFFFFF));
     OGL(StencilFuncSeparate
         (GL_BACK,
          rb_to_ogl3_comparison[desc->back_face_op.stencil_func],
          desc->stencil_ref,
-         ~0));
+         0xFFFFFFFF));
   }
   return 0;
 }

@@ -121,11 +121,11 @@ get_active_uniform
     ++uniform_namelen;
 
     uniform->name = MEM_ALLOC
-      (ctxt->allocator, sizeof(char) * uniform_namelen);
+      (ctxt->allocator, sizeof(char) * (size_t)uniform_namelen);
     if(!uniform->name)
       goto error;
 
-    uniform->name = strncpy(uniform->name, buffer, uniform_namelen);
+    uniform->name = strncpy(uniform->name, buffer, (size_t)uniform_namelen);
     uniform->location = OGL(GetUniformLocation(program->name, uniform->name));
   }
 
@@ -220,9 +220,9 @@ rb_get_uniforms
    struct rb_uniform* dst_uniform_list[])
 {
   GLchar* uniform_buffer = NULL;
+  unsigned int uniform_id = 0;
   int uniform_buflen = 0;
   int nb_uniforms = 0;
-  int uniform_id = 0;
   int err = 0;
 
   if(!ctxt || !prog || !out_nb_uniforms)
@@ -238,11 +238,11 @@ rb_get_uniforms
       OGL(GetProgramiv
         (prog->name, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniform_buflen));
     uniform_buffer = MEM_ALLOC
-      (ctxt->allocator, sizeof(GLchar) * uniform_buflen);
+      (ctxt->allocator, sizeof(GLchar) * (size_t)uniform_buflen);
     if(!uniform_buffer)
       goto error;
 
-    for(uniform_id = 0; uniform_id < nb_uniforms; ++uniform_id) {
+    for(uniform_id = 0; uniform_id < (unsigned int)nb_uniforms; ++uniform_id) {
       struct rb_uniform* uniform = NULL;
 
       err = get_active_uniform
@@ -258,13 +258,13 @@ exit:
   if(uniform_buffer)
     MEM_FREE(ctxt->allocator, uniform_buffer);
   if(out_nb_uniforms)
-    *out_nb_uniforms = nb_uniforms;
+    *out_nb_uniforms = (size_t)nb_uniforms;
   return err;
 
 error:
   if(dst_uniform_list) {
     /* NOTE: uniform_id <=> nb uniforms in dst_uniform_list; */
-    int i = 0;
+    unsigned int i = 0;
     for(i = 0; i < uniform_id; ++i) {
       RB(uniform_ref_put(dst_uniform_list[i]));
       dst_uniform_list[i] = NULL;

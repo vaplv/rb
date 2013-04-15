@@ -66,7 +66,7 @@ attach_tex2d
   mip = render_target->desc.tex2d.mip_level;
   if(attachment >= 0) {
     ASSERT((unsigned int)attachment < buffer->desc.buffer_count);
-    ogl3_attachment = GL_COLOR_ATTACHMENT0 + attachment;
+    ogl3_attachment = (GLenum)(GL_COLOR_ATTACHMENT0 + attachment);
     rt = buffer->render_target_list + attachment;
   } else {
     switch(tex2d->format) {
@@ -85,7 +85,7 @@ attach_tex2d
   if(!tex2d) {
     release_render_target_resource(rt);
     OGL(FramebufferTexture2D
-      (GL_FRAMEBUFFER, ogl3_attachment, GL_TEXTURE_2D, 0, mip));
+      (GL_FRAMEBUFFER, ogl3_attachment, GL_TEXTURE_2D, 0, (GLint)mip));
   } else {
     if(tex2d->mip_count < mip
     || tex2d->mip_list[mip].width != buffer->desc.width
@@ -95,7 +95,7 @@ attach_tex2d
     release_render_target_resource(rt);
     RB(tex2d_ref_get(tex2d));
     OGL(FramebufferTexture2D
-      (GL_FRAMEBUFFER, ogl3_attachment, GL_TEXTURE_2D, tex2d->name, mip));
+      (GL_FRAMEBUFFER, ogl3_attachment, GL_TEXTURE_2D, tex2d->name,(GLint)mip));
   }
   memcpy(rt, render_target, sizeof(struct rb_render_target));
 
@@ -354,7 +354,7 @@ rb_read_back_framebuffer
 
   /* Map the (x, y) coordinates from 'upper left' origin to OpenGL convention
    * (bottom left) */
-  y = buffer->desc.height < y ? 0.f : buffer->desc.height - y;
+  y = buffer->desc.height < y ? 0 : buffer->desc.height - y;
 
   render_target =
     rt_id >= 0 ? buffer->render_target_list + rt_id : &buffer->depth_stencil;
@@ -366,9 +366,11 @@ rb_read_back_framebuffer
   if(read_data) {
     OGL(BindFramebuffer(GL_FRAMEBUFFER, buffer->name));
     if(rt_id >= 0)
-      OGL(ReadBuffer(GL_COLOR_ATTACHMENT0 + rt_id));
+      OGL(ReadBuffer((GLenum)(GL_COLOR_ATTACHMENT0 + rt_id)));
 
-    OGL(ReadPixels(x, y, width, height, desc.format, desc.type, read_data));
+    OGL(ReadPixels
+      ((GLint)x, (GLint)y, (GLint)width, (GLint)height, 
+       desc.format, desc.type, read_data));
     OGL(BindFramebuffer
       (GL_FRAMEBUFFER, buffer->ctxt->state_cache.framebuffer_binding));
   }
@@ -405,9 +407,9 @@ rb_clear_framebuffer_render_targets
     if(UNLIKELY(count && !color_vals))
        goto error;
     for(i = 0; i < count; ++i) {
-      const unsigned rt_id = color_vals[i].index;
+      const GLint rt_id = (GLint)color_vals[i].index;
 
-      if(UNLIKELY(rt_id >= buffer->desc.buffer_count))
+      if(UNLIKELY(color_vals[i].index >= buffer->desc.buffer_count))
         goto error;
 
       get_ogl3_render_target_desc(&buffer->render_target_list[rt_id], &rt_desc);

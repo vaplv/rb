@@ -142,7 +142,7 @@ release_tex2d(struct ref* ref)
 {
   struct rb_context* ctxt = NULL;
   struct rb_tex2d* tex = NULL;
-  size_t i = 0;
+  unsigned int i = 0;
   ASSERT(ref);
 
   tex = CONTAINER_OF(ref, struct rb_tex2d, ref);
@@ -198,7 +198,8 @@ rb_create_tex2d
   OGL(GenTextures(1, &tex->name));
 
   OGL(BindTexture(GL_TEXTURE_2D, tex->name));
-  OGL(TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, desc->mip_count - 1));
+  OGL(TexParameteri
+    (GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, (GLint)(desc->mip_count - 1)));
   OGL(BindTexture
     (GL_TEXTURE_2D,
      ctxt->state_cache.texture_binding_2d[ctxt->state_cache.active_texture]));
@@ -220,8 +221,8 @@ rb_create_tex2d
   pixel_size = rb_ogl3_sizeof_pixel(tex->format, tex->type);
   for(i = 0, size = 0; i < desc->mip_count; ++i) {
     tex->mip_list[i].pixbuf_offset = size;
-    tex->mip_list[i].width = MAX(desc->width / (1<<i), 1);
-    tex->mip_list[i].height = MAX(desc->height / (1<<i), 1);
+    tex->mip_list[i].width = MAX(desc->width / (1u<<i), 1u);
+    tex->mip_list[i].height = MAX(desc->height / (1u<<i), 1u);
     size += tex->mip_list[i].width * tex->mip_list[i].height * pixel_size;
   }
 
@@ -307,16 +308,16 @@ rb_tex2d_data(struct rb_tex2d* tex, unsigned int level, const void* data)
   pixel_size = rb_ogl3_sizeof_pixel(tex->format, tex->type);
   mip_size = mip_level->width * mip_level->height * pixel_size;
 
-  #define TEX_IMAGE_2D(data) \
-    OGL(TexImage2D \
-      (GL_TEXTURE_2D, \
-       level, \
-       tex->internal_format, \
-       mip_level->width, \
-       mip_level->height, \
-       0, \
-       tex->format, \
-       tex->type, \
+  #define TEX_IMAGE_2D(data)                                                   \
+    OGL(TexImage2D                                                             \
+      (GL_TEXTURE_2D,                                                          \
+       (GLint)level,                                                           \
+       (GLint)tex->internal_format,                                            \
+       (GLint)mip_level->width,                                                \
+       (GLint)mip_level->height,                                               \
+       0,                                                                      \
+       tex->format,                                                            \
+       tex->type,                                                              \
        data))
 
   OGL(BindTexture(GL_TEXTURE_2D, tex->name));
@@ -331,7 +332,8 @@ rb_tex2d_data(struct rb_tex2d* tex, unsigned int level, const void* data)
       OGL(PixelStorei(GL_UNPACK_ALIGNMENT, 4));
     }
   } else {
-    RB(buffer_data(tex->pixbuf, mip_level->pixbuf_offset, mip_size, data));
+    RB(buffer_data
+      (tex->pixbuf, (int)mip_level->pixbuf_offset, (int)mip_size, data));
     OGL(BindBuffer(tex->pixbuf->target, tex->pixbuf->name));
     if(pixel_size == 4) {
       TEX_IMAGE_2D(BUFFER_OFFSET(mip_level->pixbuf_offset));

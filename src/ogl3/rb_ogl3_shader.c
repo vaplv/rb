@@ -60,7 +60,7 @@ rb_create_shader
   (struct rb_context* ctxt,
    enum rb_shader_type type,
    const char* source,
-   int length,
+   size_t length,
    struct rb_shader** out_shader)
 {
   int err = 0;
@@ -100,24 +100,26 @@ error:
 }
 
 int
-rb_shader_source(struct rb_shader* shader, const char* source, int length)
+rb_shader_source(struct rb_shader* shader, const char* source, size_t length)
 {
   int err = 0;
   GLint status = GL_TRUE;
+  GLint gl_length = 0;
 
   if(!shader || (length > 0 && !source))
     goto error;
 
-  OGL(ShaderSource(shader->name, 1, (const char**)&source, &length));
+  OGL(ShaderSource(shader->name, 1, (const char**)&source, &gl_length));
   OGL(CompileShader(shader->name));
   OGL(GetShaderiv(shader->name, GL_COMPILE_STATUS, &status));
+  length = (size_t)gl_length;
 
   if(status == GL_FALSE) {
-    int log_length = 0;
+    GLint log_length = 0;
     OGL(GetShaderiv(shader->name, GL_INFO_LOG_LENGTH, &log_length));
 
     shader->log = MEM_REALLOC
-      (shader->ctxt->allocator, shader->log, log_length*sizeof(char));
+      (shader->ctxt->allocator, shader->log, (size_t)log_length*sizeof(char));
     if(!shader->log)
       goto error;
 

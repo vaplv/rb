@@ -91,7 +91,7 @@ release_sampler(struct ref* ref)
 {
   struct rb_context* ctxt = NULL;
   struct rb_sampler* sampler = NULL;
-  size_t i = 0;
+  unsigned int i = 0;
   ASSERT(ref);
 
   sampler = CONTAINER_OF(ref, struct rb_sampler, ref);
@@ -191,14 +191,19 @@ rb_sampler_parameters
   min_lod = MAX(MIN(min_lod, -1000.f), 1000.f);
   max_lod = MAX(MIN(min_lod, -1000.f), 1000.f);
 
-  OGL(SamplerParameteri(sampler->name, GL_TEXTURE_MIN_FILTER, filter.min));
-  OGL(SamplerParameteri(sampler->name, GL_TEXTURE_MAG_FILTER, filter.mag));
   OGL(SamplerParameteri
-    (sampler->name, GL_TEXTURE_WRAP_S, rb_to_ogl3_address(desc->address_u)));
+    (sampler->name, GL_TEXTURE_MIN_FILTER, (GLint)filter.min));
   OGL(SamplerParameteri
-    (sampler->name, GL_TEXTURE_WRAP_T, rb_to_ogl3_address(desc->address_v)));
+    (sampler->name, GL_TEXTURE_MAG_FILTER, (GLint)filter.mag));
   OGL(SamplerParameteri
-    (sampler->name, GL_TEXTURE_WRAP_R, rb_to_ogl3_address(desc->address_w)));
+    (sampler->name, GL_TEXTURE_WRAP_S, 
+     (GLint)rb_to_ogl3_address(desc->address_u)));
+  OGL(SamplerParameteri
+    (sampler->name, GL_TEXTURE_WRAP_T,
+     (GLint)rb_to_ogl3_address(desc->address_v)));
+  OGL(SamplerParameteri
+    (sampler->name, GL_TEXTURE_WRAP_R, 
+     (GLint)rb_to_ogl3_address(desc->address_w)));
   OGL(SamplerParameterf(sampler->name, GL_TEXTURE_LOD_BIAS, desc->lod_bias));
   OGL(SamplerParameterf(sampler->name, GL_TEXTURE_MIN_LOD, min_lod));
   OGL(SamplerParameterf(sampler->name, GL_TEXTURE_MAX_LOD, max_lod));

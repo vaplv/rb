@@ -138,14 +138,14 @@ rb_vertex_attrib_array
       goto error;
     }
 
-    offset = attrib[i].offset;
-    OGL(EnableVertexAttribArray(attrib[i].index));
+    offset = (intptr_t)attrib[i].offset;
+    OGL(EnableVertexAttribArray((GLuint)attrib[i].index));
     OGL(VertexAttribPointer
-        (attrib[i].index,
+        ((GLuint)attrib[i].index,
          ogl3_attrib_nb_components(attrib[i].type),
          GL_FLOAT,
          GL_FALSE,
-         attrib[i].stride,
+         (GLsizei)attrib[i].stride,
          (void*)offset));
   }
 
@@ -181,7 +181,7 @@ rb_remove_vertex_attrib
     if(current_attrib < 0) {
       err = -1;
     } else {
-      OGL(DisableVertexAttribArray(current_attrib));
+      OGL(DisableVertexAttribArray((GLuint)current_attrib));
     }
   }
   OGL(BindVertexArray(array->ctxt->state_cache.vertex_array_binding));
