@@ -109,6 +109,7 @@ rb_shader_source(struct rb_shader* shader, const char* source, size_t length)
   if(!shader || (length > 0 && !source))
     goto error;
 
+  gl_length = (GLint)length;
   OGL(ShaderSource(shader->name, 1, (const char**)&source, &gl_length));
   OGL(CompileShader(shader->name));
   OGL(GetShaderiv(shader->name, GL_COMPILE_STATUS, &status));
